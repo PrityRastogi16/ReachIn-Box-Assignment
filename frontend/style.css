@@ -1,0 +1,60 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins',sans-serif;
+}
+html, body{
+  display: grid;
+  height: 80vh;
+  width: 100%;
+  place-items: center;
+  background-color: #B0C5A4;
+}
+h1{
+    color: #0c0c0c;
+    font-size: 2.5rem;
+}
+.container{
+  background: #faf7f7;
+  max-height: 400px;
+  height: 400px;
+  max-width: 400px;
+  width: 100%;
+  padding: 25px 30px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 10px 105px rgba(0, 0, 0, 0.2);
+}
+
+.container .option{
+  font-size: 24px;
+  text-align: center;
+}
+.container .microsoft a,
+.container .google a{
+  display: block;
+  height: 55px;
+  width: 100%;
+  font-size: 15px;
+  text-decoration: none;
+  padding-top: 4px;
+  padding-left: 20px;
+  line-height: 45px;
+  color: #fff;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.container .microsoft i,
+.container .google i{
+  padding-right: 12px;
+  font-size: 20px;
+}
+.container .google a{
+  background-color: #d14c40;
+  margin: 20px 0 15px 0;
+}
+
