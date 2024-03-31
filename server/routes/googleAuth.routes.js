@@ -115,6 +115,23 @@ const sendMail = async (data) => {
 };
 
 
+googleRouter.get("/all-mails",  async (req, res) => {
+    try {
+      const url = `https://gmail.googleapis.com/gmail/v1/users/${req.params.email}/messages?maxResults=50`;
+      const token = await redisConnection.get(req.params.email);
+      if (!token) {
+        return res.send("Token not found , Please login again to get token");
+      }
+      const config = createConfig(url, token);
+      const response = await axios(config);
+      res.json(response.data);
+    } catch (error) {
+      res.send(error.message);
+      console.log("Can't get emails ", error.message);
+    }
+  });
+
+
 module.exports = {
     googleRouter,sendMail
 }

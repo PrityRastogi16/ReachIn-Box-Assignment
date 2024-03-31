@@ -53,6 +53,7 @@ messageRouter.get("/all-draft/:email", async(req,res)=>{
 
 messageRouter.get("/read-mail/:email/message/:message", async(req,res)=>{
     try{
+      
        const URL = `https://gmail.googleapis.com/gmail/v1/users/${req.params.email}/messages/${req.params.message}`;
        const token = await redisConnection.get(req.params.email);
        console.log(token);
