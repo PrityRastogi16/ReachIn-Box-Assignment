@@ -4,6 +4,7 @@
 ## Deployment Links:
 - Frontend : https://reach-in-box-assignment.vercel.app/
 - Backend : https://reachin-box-assignment.onrender.com
+- API Documentation: https://documenter.getpostman.com/view/31788909/2sA35HX1Y1
 
 ## npm packages used:
 - express
