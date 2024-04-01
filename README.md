@@ -128,5 +128,12 @@ Response:
 - ### GET /outlook/list/:email
   - This will fetch all the available mails in user inbox
 
+
 - ### GET /outlook/read/:email/:messageId
   - This endpoint is used to read a particular mail of a user and generate reply according to the email content
+
+## Some View
+ <img src="assets/Screenshot (362).png">
+
+ <img src="assets/Screenshot (363).png">
+
