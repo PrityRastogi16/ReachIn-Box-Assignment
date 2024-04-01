@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@azure/msal-node": "^2.6.6",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "axios": "^1.6.8",
     "bullmq": "^5.4.6",
     "cors": "^2.8.5",
@@ -20,6 +22,6 @@
   },
   "scripts": {
     "server": "nodemon index.js",
-    "start" :"nodemon bullmq.worker.js"
+    "start": "nodemon bullmq.worker.js"
   }
 }
