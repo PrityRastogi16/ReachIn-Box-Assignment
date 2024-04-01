@@ -6,22 +6,15 @@
 - Backend : https://reachin-box-assignment.onrender.com
 - API Documentation: https://documenter.getpostman.com/view/31788909/2sA35HX1Y1
 
-## npm packages used:
-- express
-- cors
-- dotenv
-- googleapis
-- ioredis
-- axios
-- bullmq
-- openai
-- @azure/msal-node
 
 ## Technologies used:
 - Nodejs
 - Expressjs
 - openai API
-- 
+- Bullmq
+- Javascript
+
+  
 ## API Endpoints:
 
 ## Google
