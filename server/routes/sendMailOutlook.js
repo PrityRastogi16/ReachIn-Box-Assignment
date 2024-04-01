@@ -9,6 +9,8 @@ const { default: axios } = require("axios");
 const app = express();
 const outlookMailRouter = express.Router();
 require("dotenv").config();
+const OpenAi = require("openai")
+const openai = new OpenAi({apiKey:process.env.OPENAI_APIKEY})
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -51,19 +53,77 @@ outlookMailRouter.get("/read/:email/:msgID", async(req,res)=>{
     }
 })
 
-// outlookMailRouter.post("/send-email/:email", async (req, res) => {
-//   try {
-//     const accessToken = await redisConnection.get(req.params.email);
-//     if (!accessToken) {
-//       return res.status(401).send("Access token not found in session.");
-//     }
-    
-//   } catch (error) {
-//     console.error("Error sending email:", error);
-//     res.status(500).send("Error sending email.");
-//   }
-// });
+outlookMailRouter.post("/send-email/:email", async (req, res) => {
+    try {
+      const accessToken = await redisConnection.get(req.params.email);
+      if (!accessToken) {
+        return res.status(401).send("Access token not found in session.");
+      }
+  
+      // Construct the email message
+      const emailData = req.body; // Assuming you are sending email data in the request body
+      const emailContent = await generateEmailContent(emailData.label); 
+      console.log(emailContent)
+      const emailPayload = {
+       message: {
+          subject: `User is ${emailData.label}`,
+          body: {
+            contentType: 'Text',
+            // content: `<div style="background-color: #f5f5f5; padding: 20px; border-radius: 10px; text-align: center;"><p>${emailContent}</p></div>`
+           content:`${emailContent}`,
+          },
+          toRecipients: [{ emailAddress: { address: emailData.to } }]
+        },
+      };
+  
+      // Send the email via Outlook's REST API
+      const apiUrl = "https://graph.microsoft.com/v1.0/me/sendMail";
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      };
+  
+      const response = await axios.post(apiUrl, emailPayload, { headers });
+  
+      console.log("Email sent successfully");
+      res.status(200).send("Email sent successfully");
+    } catch (error) {
+      console.error("Error sending email:", error);
+      res.status(500).send("Error sending email.");
+    }
+  });
+  
+  // Function to get email content based on label
+  async function generateEmailContent(label) {
+    let prompt;
+    switch (label) {
+        case 'Interested':
+            prompt = 'User is interested. Please draft an email thanking them for their interest and suggesting a suitable time for a briefing call.';
+            break;
+        case 'Not Interested':
+            prompt = 'User is not interested. Please draft an email thanking them for their time and asking for feedback and suggestions.';
+            break;
+        case 'More Information':
+            prompt = 'User needs more information. Please draft an email expressing gratitude for their interest and asking for specific information they are looking for.';
+            break;
+        default:
+            prompt = '';
+    }
 
+    const data = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo-0301",
+        temperature: 0.7,
+        messages: [
+            {
+                role: 'user',
+                content: prompt,
+            },
+        ],
+    });
+    console.log(data)
+
+    return data.choices[0].message;
+}
 // Using Outlook router
 outlookMailRouter.use("/outlook", outlookRouter);
 
