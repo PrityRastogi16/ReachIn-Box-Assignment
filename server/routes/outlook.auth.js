@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const clientId = process.env.OUTLOOK_CLIENT_ID;
 const clientSecret = process.env.OUTLOOK_CLIENT_SECRET;
-const redirectUri = "http://localhost:2002/outlook/callback"; 
+const redirectUri = "https://reachin-box-assignment.onrender.com/outlook/callback"; 
 
 const scopes = ['user.read','Mail.Read','Mail.Send'];
 
