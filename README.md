@@ -117,6 +117,8 @@ Response:
 }
 ```
 
+## To explore all the endpoints in details please refer documentation- https://documenter.getpostman.com/view/31788909/2sA35HX1Y1
+
 ## Outlook
 
 - ### GET /outlook/list/:email
