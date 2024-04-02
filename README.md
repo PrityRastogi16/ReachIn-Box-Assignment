@@ -8,12 +8,12 @@
 
 
 ## Technologies used:
-- Nodejs
-- Expressjs
-- openai API
-- Bullmq
-- Javascript
-
+- Node.js: Used for backend development.
+- Express.js: Framework used for building the web application.
+- Google APIs: Interacted with Gmail API for accessing Google email accounts.
+- Microsoft Graph API: Interacted with Outlook API for accessing Outlook email accounts.
+- OpenAI API: Used for generating automated responses to emails.
+- Bullmq: Used queuing emails in my Node.js backend application.
   
 ## API Endpoints:
 
