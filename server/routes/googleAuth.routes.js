@@ -76,21 +76,11 @@ const sendMail = async (data) => {
         let mailOptions = {
             from: data.from,
             to: data.to,
-            subject: "",
+            subject: "Exciting Offer",
             text: "",
             html: "",
         };
-        let emailContent = "";
-        if (data.label == 'Interested') {
-            emailContent = 'If email mentions Interested, first thank them for showing interest and then ask them for a briefing call and suggest a suitable time. Write a small text around 200 words. Dont mention Dear name just say dear user and give beautiful reply';
-            mailOptions.subject = `User is ${data.label}`;
-        } else if (data.label == 'Not Interested') {
-            emailContent = 'If email mentions Not Interested, first thank them for their time and then ask for feedback and suggestions. Write small text around 150 words.Dont mention Dear name just say dear user and give beautiful reply ';
-            mailOptions.subject = `User is ${data.label}`;
-        } else if (data.label == 'More Information') {
-            emailContent = 'If email mentions More Information, first express gratitude for showing interest and then ask them for specific information they are looking for, and assure them of assistance. Write small text around 150 words.Dont mention Dear name just say dear user and give beautiful reply ';
-            mailOptions.subject = `User is ${data.label}`;
-        }
+        let emailContent = "Generate a mail, to mail a user about the offer and comapny in better and impressive way like around 200 words. Also ask for you are intrested or not, or they want some more information and dont mention dear name, instead say dear user.My name is Prity Rastogi and company name is Reach-In Box";
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-0301",
             temperature: 0.7,
@@ -101,10 +91,16 @@ const sendMail = async (data) => {
                 },
             ],
         });
-        mailOptions.text = response.choices[0].message.content;
-        mailOptions.html=`<div style="background-color: #f5f5f5; padding: 20px; border-radius: 10px; text-align: center;">
-        <p>${response.choices[0].message.content}</p>
-      </div>`;
+        // mailOptions.text = response.choices[0].message.content;
+        const generatedText = response.choices[0].message.content;
+
+        mailOptions.html=`<div style="background-color: #f5f5f5; padding: 20px; border-radius: 10px; text-align: center; font-family: Arial, sans-serif;">
+        <h2 style="color: #333;">Exciting Offer from Reach-In Box!</h2>
+        <p style="font-size: 16px; color: #666;">Dear valued customer,</p>
+        <p style="font-size: 16px; color: #666;">${generatedText}</p>
+        <p style="font-size: 16px; color: #666;">Best regards,</p>
+        <p style="font-size: 16px; color: #666;"><strong>Prity Rastogi</strong><br>Reach-In Box</p>
+    </div>`;
         const output = await transporter.sendMail(mailOptions);
         console.log('Email sent successfully');
         return output;
@@ -130,6 +126,27 @@ googleRouter.get("/all-mails",  async (req, res) => {
       console.log("Can't get emails ", error.message);
     }
   });
+
+
+  async function assignLabel(label, email,id ,accessToken){
+    try {
+        let labelOptions={
+            "addLabelIds":[`${label}`]
+        }
+        const response = await axios.post(`https://gmail.googleapis.com/gmail/v1/users/${email}/messages/${id}/modify`,labelOptions,{
+            headers:{
+                "Content-Type" : "application/json",
+                "Authorization" :`Bearer ${accessToken}`
+            }
+        })
+        console.log(response.data)
+        return true;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
+
 
 
 module.exports = {

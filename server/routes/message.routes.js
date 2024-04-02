@@ -127,6 +127,67 @@ messageRouter.post("/createLabel/:email", async(req,res)=>{
   }
 })
 
+messageRouter.post("/addLabel/:email/messages/:id",async(req,res)=>{
+  try {
+      let {email,id} = req.params
+      
+      let access_token = await redisConnection.get(email)
+      
+      let response = await axios.post(`https://gmail.googleapis.com/gmail/v1/users/${email}/messages/${id}/modify`,req.body,{
+          headers:{
+              "Content-Type" : "application/json",
+              "Authorization" :`Bearer ${access_token}`
+          }
+      })
+      res.status(200).json(response.data)
+  } catch (error) {
+      console.log(error)
+      res.status(400).json({Error:"Error while adding label to message"})
+  }
+})
+
+
+messageRouter.get("/getLabel/:email/:labelId", async (req, res) => {
+  try {
+    const { email, labelId } = req.params;
+    const accessToken = await redisConnection.get(email);
+
+    const response = await axios.get(
+      `https://gmail.googleapis.com/gmail/v1/users/${email}/labels/${labelId}`,
+      {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`
+        }
+      }
+    );
+
+    res.status(200).json(response.data);
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: err.message });
+  }
+});
+
+
+// ADDING A LABEL
+messageRouter.post("/addLabel/:email/messages/:id",async(req,res)=>{
+  try {
+      let {email,id} = req.params
+      let accessToken = await redisConnection.get(email)
+      
+      let response = await axios.post(`https://gmail.googleapis.com/gmail/v1/users/${email}/messages/${id}/modify`,req.body,{
+          headers:{
+              "Content-Type" : "application/json",
+              "Authorization" :`Bearer ${accessToken}`
+          }
+      })
+      res.status(200).json(response.data)
+  } catch (err) {
+      console.log(err)
+      res.status(400).json({Error:"Error"})
+  }
+})
+
 module.exports = {
     messageRouter
 }

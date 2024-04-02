@@ -19,25 +19,15 @@ const openai = new OpenAI({apiKey: process.env.OPENAI_APIKEY});
 let reply = true;
 const sendMail = async (data) => {
     try {
-        const token = await redisConnection.get(data.to);
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            port: 465,
-            secure: true,
-            auth: {
-                user: process.env.SMTP_mail,
-                pass: process.env.SMTP_pass,
-            },
-        });
-        let mailOptions = {
+        const token = await redisConnection.get(data.from);
+        let mailContent = {
             from: data.from,
             to: data.to,
-            subject: "Hello , Greeting of the day!",
-            text: "Hello , Greeting of the day!",
-            html: "<h1>Hello , Greeting of the day!</h1>",
+            subject: "Thank You !",
+            text: "Greeting of the day !",
+            html: "",
         };
         let response;
-        console.log(response)
         if(!reply){
         response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-0301",
@@ -53,33 +43,75 @@ const sendMail = async (data) => {
     }
 
     if (data.label == 'Interested') {
-        mailOptions.html = `
+        mailContent.html = `
         <div style="background-color: #f0f0f0; padding: 20px; border-radius: 10px; text-align: center;">
           <p>${reply? `Thank you for expressing interest in our compamy. We will looking forward to connect with you. Have a great day!` : `${response.choices[0].message.content}`}</p>
           
         </div>`;
-        mailOptions.subject = `${data.label}`;
-    } else if (data.label == 'Not interested') {
-        mailOptions.html = `
+        mailContent.subject = `${data.label}`;
+    } else if (data.label == 'Not Interested') {
+        mailContent.html = `
         <div style="background-color: #f0f0f0; padding: 25px; border-radius: 20px; text-align: center;">
           <p>${reply? `Thank you for your time. Could you please provide us some feedback.` : `${response.choices[0].message.content}`}</p>   
         </div>`;
-        mailOptions.subject = `${data.label}`;
+        mailContent.subject = `${data.label}`;
     } else if (data.label == 'More Information') {
-        mailOptions.html = `
+        mailContent.html = `
         <div style="background-color: #f0f0f0; padding: 20px; border-radius: 10px; text-align: center;">
           <p>${reply? `Thank you for expressing interest in our compamy. We will looking forward to connect with you and provide you more information. Have a great day!` : `${response.choices[0].message.content}`}</p>
           
         </div>`;
-        mailOptions.subject = ` ${data.label}`;
+        mailContent.subject = `${data.label}`;
     }
-        const output = await transporter.sendMail(mailOptions);
+    const emailBody = [
+        'Content-type: text/html;charset=iso-8859-1',
+        'MIME-Version: 1.0',
+        `From: ${data.from}`,
+        `To: ${data.to}`,
+        `Subject: ${mailContent.subject}`,
+        `${mailContent.text}`,
+        `${mailContent.html}`,
+  ].join('\n');
+  console.log(emailBody)
+       
+       const output = await axios.post(`https://gmail.googleapis.com/gmail/v1/users/${data.from}/messages/send`,{"raw":Buffer.from(emailBody).toString(`base64`)}, {
+        headers: {
+      "Content-Type" : "application/json",
+      'Authorization': `Bearer ${token}`
+        }
+      });
+      let labelID;
+      switch(data.label){
+        case "Interested":
+        labelID="Label_1";
+        break;
+        case "Not Interested":
+        labelID="Label_2";
+        break;
+        case "More Information":
+        labelID="Label_3";
+        break;
+        default:
+            break;
+      }
+      const labelURL = `https://gmail.googleapis.com/gmail/v1/users/${data.from}/messages/${output.data.id}/modify`;
+      const labelConfig = {
+        addLabelIds:[labelID]
+      };
+        await axios.post(labelURL, labelConfig, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+      
         console.log('Email sent successfully');
         return output; 
     } catch (err) {
         throw new Error("Sending Mail Failed" + err);
     }
 };
+
 
 
 const parseMail = async(newData)=>{
