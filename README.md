@@ -127,6 +127,25 @@ Response:
 
 - ### GET /outlook/read/:email/:messageId
   - This endpoint is used to read a particular mail of a user and generate reply according to the email content
+ 
+- ### POST /outlookmail/send-email/prity.rastogi02@outlook.com
+  - This endpoint is used to send mail to particular user
+   - Example:
+```json
+Body:
+ - Example:
+```json
+Body:
+{
+   "from":"prityss7991@gmail.com",
+   "to":"surajyoti9839@gmail.com",
+   "label":"Interested"
+}
+
+Response:
+ Email sent successfully
+```
+
 
 ## Some View
  <img src="assets/Screenshot (368).png">
