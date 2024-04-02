@@ -86,6 +86,47 @@ messageRouter.get("/getMail/:email", async (req, res) => {
     }
   });
 
+
+// GET USER INFORMATION
+messageRouter.get("/userData/:email", async(req,res)=>{
+  try{
+     let {email} = req.params
+     let accessToken = await redisConnection.get(email)
+     let response = await axios.get(`https://gmail.googleapis.com/gmail/v1/users/${email}/profile`, {
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":`Bearer ${accessToken}`
+        }
+     })
+     res.status(200).json(response.data);
+  }
+  catch(err){
+    console.log(err);
+    res.status(400).json({err})
+  }
+})
+
+// Creating Labels for mails
+messageRouter.post("/createLabel/:email", async(req,res)=>{
+  try{
+     const {email} = req.params;
+     const accessToken = await redisConnection.get(email);
+     let label = req.body;
+     console.log(label);
+     let response = await axios.post(`https://gmail.googleapis.com/gmail/v1/users/${email}/labels`,label,{
+      headers: {
+        "Content-Type":"application/json",
+        "Authorization":`Bearer ${accessToken}`
+      }
+     })
+     res.status(200).json(response.data);
+  }
+  catch(err){
+    console.log(err);
+    res.status(400).json({err})
+  }
+})
+
 module.exports = {
     messageRouter
 }

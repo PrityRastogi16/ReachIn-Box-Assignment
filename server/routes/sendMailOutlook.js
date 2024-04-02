@@ -105,13 +105,13 @@ const transporter = nodemailer.createTransport({
     let prompt;
     switch (label) {
       case 'Interested':
-        prompt = 'User is interested. Please draft an email thanking them for their interest and suggesting a suitable time for a briefing call.';
+        prompt = 'User is interested. Please draft an email thanking them for their interest and suggesting a suitable time for a briefing call.Give output around 100 words';
         break;
       case 'Not Interested':
-        prompt = 'User is not interested. Please draft an email thanking them for their time and asking for feedback and suggestions.';
+        prompt = 'User is not interested. Please draft an email thanking them for their time and asking for feedback and suggestions.Give output around 100 words';
         break;
       case 'More Information':
-        prompt = 'User needs more information. Please draft an email expressing gratitude for their interest and asking for specific information they are looking for.';
+        prompt = 'User needs more information. Please draft an email expressing gratitude for their interest and asking for specific information they are looking for.Give output around 100 words';
         break;
       default:
         prompt = '';

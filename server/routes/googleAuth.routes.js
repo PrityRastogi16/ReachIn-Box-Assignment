@@ -82,13 +82,13 @@ const sendMail = async (data) => {
         };
         let emailContent = "";
         if (data.label == 'Interested') {
-            emailContent = 'If email mentions Interested, first thank them for showing interest and then ask them for a briefing call and suggest a suitable time. Write a small text around 150 words. ';
+            emailContent = 'If email mentions Interested, first thank them for showing interest and then ask them for a briefing call and suggest a suitable time. Write a small text around 200 words. Dont mention Dear name just say dear user and give beautiful reply';
             mailOptions.subject = `User is ${data.label}`;
         } else if (data.label == 'Not Interested') {
-            emailContent = 'If email mentions Not Interested, first thank them for their time and then ask for feedback and suggestions. Write small text around 50-60 words. ';
+            emailContent = 'If email mentions Not Interested, first thank them for their time and then ask for feedback and suggestions. Write small text around 150 words.Dont mention Dear name just say dear user and give beautiful reply ';
             mailOptions.subject = `User is ${data.label}`;
         } else if (data.label == 'More Information') {
-            emailContent = 'If email mentions More Information, first express gratitude for showing interest and then ask them for specific information they are looking for, and assure them of assistance. Write small text around 60-80 words. ';
+            emailContent = 'If email mentions More Information, first express gratitude for showing interest and then ask them for specific information they are looking for, and assure them of assistance. Write small text around 150 words.Dont mention Dear name just say dear user and give beautiful reply ';
             mailOptions.subject = `User is ${data.label}`;
         }
         const response = await openai.chat.completions.create({

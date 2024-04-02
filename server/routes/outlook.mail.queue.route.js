@@ -2,9 +2,9 @@ const {redisConnection} = require("../middlewares/redisMiddlewares");
 const {Queue} = require("bullmq");
 require("dotenv").config();
 const express = require("express");
-const mailRouter = express.Router();
+const outlookmailRouter = express.Router();
 
-const sendMailQueue = new Queue("email-queue", {connection:redisConnection});
+const sendMailQueue = new Queue("outlook-email-queue", {connection:redisConnection});
 
 async function init(body){
     const res = await sendMailQueue.add(
@@ -19,7 +19,7 @@ async function init(body){
     console.log("Job added to queue", res.id);
 }
 
-mailRouter.post("/send/:id", async (req, res) => {
+outlookmailRouter.post("/sendMail/:id", async (req, res) => {
     try {
       const {id} = req.params;
       const { from, to } = req.body;
@@ -33,5 +33,5 @@ mailRouter.post("/send/:id", async (req, res) => {
 
 
   module.exports = {
-    mailRouter
+    outlookmailRouter
   };

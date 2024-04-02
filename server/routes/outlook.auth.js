@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const clientId = process.env.OUTLOOK_CLIENT_ID;
 const clientSecret = process.env.OUTLOOK_CLIENT_SECRET;
-const redirectUri = "https://reachin-box-assignment.onrender.com/outlook/callback"; 
+const redirectUri = "http://localhost:2002/outlook/callback"; 
 
 const scopes = ['user.read','Mail.Read','Mail.Send'];
 
@@ -74,39 +74,7 @@ const msalConfig = {
       res.status(500).send(error);
     }
   });
-  
-  //   cca.acquireTokenByCode(tokenRequest).then((response) => {
-  //     // req.session.accessToken = response.accessToken;
-  //     const accessToken = response.accessToken
-  //     console.log(accessToken)
-  //     const userPRofile =  axios
-  //     res.send({msg:"AUthentication successful"})
-  //   }).catch((error) => {
-  //     console.log(error);
-  //     res.status(500).send(error);
-  //   });
-  // });
 
-  // outlookRouter.get("/get-access-token", async (req, res) => {
-  //   try {
-  //     const tokenRequest = {
-  //       scopes,
-  //       clientSecret: clientSecret,
-  //     };
-  
-  //     const response = await cca.acquireTokenByClientCredential(tokenRequest);
-  //     const accessToken = response.accessToken;
-  
-  //     // Store the client-specific access token in the session for future use
-  //     req.session.clientAccessToken = accessToken; // This will now be stored in the session
-  
-  //     res.send("Access token acquired successfully!");
-  //   } catch (error) {
-  //     res.status(500).send(error);
-  //     console.log("Error acquiring access token:", error.message);
-  //   }
-  // });
-
-  module.exports = {
+ module.exports = {
     outlookRouter
-  }
+}

@@ -46,7 +46,7 @@ const sendMail = async (data) => {
                 {
                     role: 'user',
                     content: `If the email mentions they are interested, your reply should ask them if they are willing to attend a demo call by suggesting a time.
-                    write a small text on above request in around 70 -80 words and thanks them`,
+                    write a small text on above request in around 200 words and thanks them`,
                 },
             ],
         });
@@ -85,12 +85,15 @@ const sendMail = async (data) => {
 const parseMail = async(newData)=>{
     try{
        const {from, to} = newData;
-       const token =await redisConnection.get(newData.to);
+       const token =await redisConnection.get(newData.from);
        console.log(newData.to)
        console.log(token)
-       const URL = `https://gmail.googleapis.com/gmail/v1/users/${to}/messages/${newData.id}`;
-       const config = createConfig(URL,token)
-       const msg = await axios(config);
+       const msg =await axios.get(`https://gmail.googleapis.com/gmail/v1/users/${from}/messages/${newData.id}`,{
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":`Bearer ${token}`
+          }
+       })
 
        const payload = msg.data.payload
        const headers = payload.headers;
@@ -170,3 +173,27 @@ const worker = new Worker("email-queue", async(job) =>{
 },
 {connection: redisConnection}
 )
+
+
+const sendOutlookEmailInQueue = (data, jobID)=>
+new Promise(async (req,res)=>{
+    let msg = await parseMail(data);
+    if(msg){
+        console.log(`Job ${jobID} completed and sent to ${data.to}`);
+    }
+    return msg;
+
+}).then((res) => console.log(res))
+.catch((err) => console.log(err));
+
+const outlookWorker = new Worker("outlook-email-queue", async (job) => {
+    let {from, to, id, jobId} = job.data;
+    jobId = job.id;
+    console.log(job.data);
+    console.log(`Job ${jobId} is started`);
+    const result = setTimeout(async () => {
+        console.log(job.id);
+        await sendOutlookEmailInQueue(job.data, job.id);
+    }, 3000);
+    console.log("Job in Progress");
+}, {connection: redisConnection});
